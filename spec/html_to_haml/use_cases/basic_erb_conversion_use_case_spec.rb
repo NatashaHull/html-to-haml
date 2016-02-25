@@ -160,9 +160,36 @@ with random  newlines and
         expect(subject).to eq(expected_haml)
       end
 
-      # TODO: Implement this stuff
-      it 'uses the correct haml indentation for unless statements'
-      it 'uses the correct indentation for single line if/unless statements'
+      it 'uses the correct haml indentation for unless statements' do
+        @erb = <<-ERB
+<% unless statement1_is_falsy %>
+<%= "some string" -%>
+<% end %>
+        ERB
+
+        expected_haml = <<-HAML
+- unless statement1_is_falsy
+  = "some string"
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+
+      it 'uses the correct indentation for single line if/unless statements' do
+        @erb = <<-ERB
+<% do_something if condition_is_truthy %>
+<% do_something unless condition_is_falsy %>
+<% "Erb-stuff" %>
+        ERB
+
+        expected_haml = <<-HAML
+- do_something if condition_is_truthy
+- do_something unless condition_is_falsy
+- "Erb-stuff"
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
 
       it 'unindents when dealing with end statements' do
         @erb = <<-ERB

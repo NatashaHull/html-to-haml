@@ -2,7 +2,8 @@ require_relative 'conversion_use_case'
 
 module HtmlToHaml
   class BasicErbConversionUseCase < ConversionUseCase
-    CONTROL_FLOW_START_KEYWORDS = ["do", "if", "case"]
+    CONTROL_FLOW_MIDDLE_OF_LINE_KEYWORDS = ["do"]
+    CONTROL_FLOW_BEGINNING_OF_LINE_KEYWORDS = ["if", "case", "unless"]
     CONTROL_FLOW_CONTINUE_KEYWORDS = ["elsif", "else", "when"]
 
     def initialize(erb)
@@ -49,13 +50,22 @@ module HtmlToHaml
     end
 
     def indentation_adjustment(erb:)
-      if matches_keywords?(erb: erb, keywords: CONTROL_FLOW_START_KEYWORDS)
+      if begin_indented_control_flow?(erb: erb)
         INDENTATION_AMOUNT
       elsif end_of_block?(erb: erb)
         -1 * INDENTATION_AMOUNT
       else
         0
       end
+    end
+
+    def begin_indented_control_flow?(erb:)
+      matches_keywords?(erb: erb, keywords: CONTROL_FLOW_MIDDLE_OF_LINE_KEYWORDS) ||
+          matches_keywords_at_beginning_of_line?(erb: erb, keywords: CONTROL_FLOW_BEGINNING_OF_LINE_KEYWORDS)
+    end
+
+    def matches_keywords_at_beginning_of_line?(erb:, keywords:)
+      erb_without_strings(erb: erb) =~ /\s*(-|=)\s*(#{keywords.join("|")})(\s|$)/
     end
 
     def matches_keywords?(erb:, keywords:)
