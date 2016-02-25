@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../../lib/html_to_haml/use_cases/basic_html_conversion'
+require_relative '../../../lib/html_to_haml/use_cases/basic_html_conversion_use_case'
 
 describe HtmlToHaml::BasicHtmlConversionUseCase do
   describe '#convert' do

@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../../lib/html_to_haml/use_cases/basic_erb_conversion'
+require_relative '../../../lib/html_to_haml/use_cases/basic_erb_conversion_use_case'
 
 describe HtmlToHaml::BasicErbConversionUseCase do
   subject { described_class.new(@erb).convert }
