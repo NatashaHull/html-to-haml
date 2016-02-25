@@ -1,7 +1,7 @@
-module HtmlToHaml
-  INDENTATION_AMOUNT = 2
+require_relative 'conversion_use_case'
 
-  class BasicErbConversionUseCase
+module HtmlToHaml
+  class BasicErbConversionUseCase < ConversionUseCase
     CONTROL_FLOW_START_KEYWORDS = ["do", "if", "case"]
     CONTROL_FLOW_CONTINUE_KEYWORDS = ["elsif", "else", "when"]
 
@@ -13,7 +13,7 @@ module HtmlToHaml
       sanitized_erb = remove_newlines_within_erb_statements(erb: @erb)
       erb = convert_syntax(erb: sanitized_erb)
       haml = convert_indentation(erb: erb)
-      remove_starting_whitespace(haml: haml)
+      remove_haml_whitespace(haml: haml)
     end
 
     private
@@ -28,7 +28,7 @@ module HtmlToHaml
       erb.gsub(/\s*?\n?(<%=|<%-|<%)\s?/) do |erb_selector|
         erb_selector_index = erb_selector =~ /-|=/
         erb_selector_index ? "\n#{erb_selector[erb_selector_index]} " : "\n- "
-      end.gsub(/\s?(-%>|%>)/, "")
+      end.gsub(/\s?(-%>|%>)/, "\n")
     end
 
     def convert_indentation(erb:)
@@ -41,15 +41,15 @@ module HtmlToHaml
     end
 
     def adjusted_indentation_level(erb:, indentation_level:)
-      if matches_kewyords?(erb: erb, keywords: CONTROL_FLOW_CONTINUE_KEYWORDS)
-        indentation_level - 2
+      if matches_keywords?(erb: erb, keywords: CONTROL_FLOW_CONTINUE_KEYWORDS)
+        indentation_level - INDENTATION_AMOUNT
       else
         indentation_level
       end
     end
 
     def indentation_adjustment(erb:)
-      if matches_kewyords?(erb: erb, keywords: CONTROL_FLOW_START_KEYWORDS)
+      if matches_keywords?(erb: erb, keywords: CONTROL_FLOW_START_KEYWORDS)
         INDENTATION_AMOUNT
       elsif end_of_block?(erb: erb)
         -1 * INDENTATION_AMOUNT
@@ -58,7 +58,7 @@ module HtmlToHaml
       end
     end
 
-    def matches_kewyords?(erb:, keywords:)
+    def matches_keywords?(erb:, keywords:)
       erb_without_strings(erb: erb) =~ /\s*(-|=)(.*)\s+(#{keywords.join("|")})(\s|$)/
     end
 
@@ -68,10 +68,6 @@ module HtmlToHaml
 
     def end_of_block?(erb:)
       erb =~ /\s*-\send/
-    end
-
-    def remove_starting_whitespace(haml:)
-      haml.lstrip
     end
   end
 end

@@ -1,7 +1,7 @@
-module HtmlToHaml
-  INDENTATION_AMOUNT = 2
+require_relative 'conversion_use_case'
 
-  class BasicHtmlConversionUseCase
+module HtmlToHaml
+  class BasicHtmlConversionUseCase < ConversionUseCase
     def initialize(html)
       @html = html
     end

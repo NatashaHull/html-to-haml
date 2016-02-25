@@ -79,7 +79,7 @@ with random  newlines and
     it 'adds newlines when the erb needs to be moved onto its own line' do
       @erb = <<-ERB
 <htmlStuff> Some text
-with random  newlines and <%= "spacing" -%>
+with random  newlines and <%= "spacing" -%> and more
 </htmlStuff>
       ERB
 
@@ -87,6 +87,7 @@ with random  newlines and <%= "spacing" -%>
 <htmlStuff> Some text
 with random  newlines and
 = "spacing"
+ and more
 </htmlStuff>
       HAML
 
