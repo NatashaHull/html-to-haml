@@ -5,12 +5,48 @@ describe HtmlToHaml::BasicHtmlConversionUseCase do
   describe '#convert' do
     subject { described_class.new(@html).convert }
 
-    context 'Plain text is just rendered' do
-      before do
+    context 'plain text' do
+      it 'does not change plain text' do
         @html = 'Plain text html with rand\nom ne\nwlines'
+        expect(subject).to eq(@html)
       end
 
-      it { should eq(@html) }
+      it 'corrects the indentation of plain text nested under html' do
+        @html = <<-HTML
+<html-stuff>
+Plainy plain text
+</html-stuff>
+        HTML
+
+        expected_haml = <<-HAML
+%html-stuff
+  Plainy plain text
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
+
+    context 'the html string has haml converted erb in it' do
+      it 'does not change haml strings' do
+        @html = '- "Haml string here"'
+        expect(subject).to eq(@html)
+      end
+
+      it 'corrects the indentation of haml strings nested under html' do
+        @html = <<-HTML
+<html-stuff>
+- "Some haml code"
+</html-stuff>
+        HTML
+
+        expected_haml = <<-HAML
+%html-stuff
+  - "Some haml code"
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
     end
 
     context 'There is only one tag' do

@@ -2,27 +2,31 @@ require_relative 'conversion_use_case'
 
 module HtmlToHaml
   class BasicHtmlConversionUseCase < ConversionUseCase
-    def initialize(html)
-      @html = html
+    ERB_LINE_REGEX = "\n\s*(-|=).*$"
+    CLOSING_HTML_REGEX = "<\/.*?>"
+
+    def initialize(html, remove_whitespace: true)
+      # Since Haml uses whitespace in a way html doesn't, this starts by stripping
+      # whitespace to start the next gsub with a clean slate. Unless the caller opts
+      # out.
+      @html = if remove_whitespace
+                remove_html_whitespace(html: html)
+              else
+                html
+              end
     end
 
     def convert
-      # Since Haml uses whitespace in a way html doesn't, this starts by stripping
-      # whitespace to start the next gsub with a clean slate.
-      stripped_html = remove_html_whitespace(html: @html)
       indentation_level = 0
-      haml = stripped_html.gsub(/(<\/.*?>)|<|>/) do |matched_elem|
+      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|<|>|\n/) do |matched_elem, idx|
+        indentation_level = adjusted_indentation_level(html: matched_elem, indentation_level: indentation_level)
+        indentation = " " * indentation_level
         case matched_elem
-          when /<\/.*?>/
-            indentation_level -= 2
-            indentation = " " * indentation_level
-            "\n#{indentation}"
+          when /#{ERB_LINE_REGEX}/
+            "\n#{indentation}#{matched_elem[1..-1]}"
           when "<"
-            indentation = " " * indentation_level
             "\n#{indentation}%"
-          when ">"
-            indentation_level += 2
-            indentation = " " * indentation_level
+          else
             "\n#{indentation}"
         end
       end
@@ -31,12 +35,23 @@ module HtmlToHaml
 
     private
 
+    def adjusted_indentation_level(html:, indentation_level:)
+      case html
+        when /#{CLOSING_HTML_REGEX}/
+          indentation_level - INDENTATION_AMOUNT
+        when ">"
+          indentation_level + INDENTATION_AMOUNT
+        else
+          indentation_level
+      end
+    end
+
     def remove_html_whitespace(html:)
       html.gsub(/^\s*/, "").delete("\n")
     end
 
     def remove_haml_whitespace(haml:)
-      haml.sub("\n", "").gsub(/\n\s*\n/, "\n")
+      haml.sub("\n", "").gsub(/(\n\s*)\n\s*%/, '\1%').gsub(/\n\s*\n/, "\n")
     end
   end
 end

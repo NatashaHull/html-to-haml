@@ -1,0 +1,20 @@
+%html
+  %body
+    - random_array_of_stuff.each do |arr_elem|
+      - if arr_elem
+        - case arr_elem
+        - when Fixnum
+          %p
+            = arr_elem > 0
+            %tag
+        - when String
+          %p
+            = arr_elem
+            %tag
+        - when Array
+          %p
+            = "length: #{arr_elem.length}"
+            %tag
+      - else
+        Random html text
+        = "Random erb string"

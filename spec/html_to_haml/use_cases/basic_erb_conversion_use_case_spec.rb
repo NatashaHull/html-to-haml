@@ -160,6 +160,10 @@ with random  newlines and
         expect(subject).to eq(expected_haml)
       end
 
+      # TODO: Implement this stuff
+      it 'uses the correct haml indentation for unless statements'
+      it 'uses the correct indentation for single line if/unless statements'
+
       it 'unindents when dealing with end statements' do
         @erb = <<-ERB
 <% sample_array.each do |arr_elem| %>
