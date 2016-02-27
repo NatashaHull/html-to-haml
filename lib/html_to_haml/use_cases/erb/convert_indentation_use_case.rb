@@ -1,5 +1,5 @@
 require 'singleton'
-require_relative '../conversion_use_case'
+require_relative '../../html_to_haml'
 require_relative '../../tools/erb/indentation_tracker'
 require_relative '../../tools/erb/control_flow_matcher'
 

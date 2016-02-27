@@ -121,7 +121,7 @@ Plainy plain text
 
         it 'returns the haml for one-line nested html with the correct indentation levels' do
           @html = "<htmlTag1>Some content here<nestedHtmlTag>Some nested content there</nestedHtmlTag></htmlTag1>"
-          
+
           expected_haml = <<-HAML
 %htmlTag1
   Some content here

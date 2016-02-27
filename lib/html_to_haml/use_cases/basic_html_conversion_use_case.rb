@@ -1,7 +1,10 @@
-require_relative 'conversion_use_case'
+require_relative '../html_to_haml'
+require_relative '../helpers/haml_whitespace_cleaner'
 
 module HtmlToHaml
-  class BasicHtmlConversionUseCase < ConversionUseCase
+  class BasicHtmlConversionUseCase
+    include HtmlToHaml::HamlWhitespaceCleaner
+
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
     CLOSING_HTML_REGEX = "<\/.*?>"
 

@@ -1,8 +1,11 @@
-require_relative '../conversion_use_case'
+require_relative '../../html_to_haml'
+require_relative '../../helpers/haml_whitespace_cleaner'
 require_relative 'convert_indentation_use_case'
 
 module HtmlToHaml::Erb
-  class BasicConversionUseCase < HtmlToHaml::ConversionUseCase
+  class BasicConversionUseCase
+    include HtmlToHaml::HamlWhitespaceCleaner
+
     def initialize(erb)
       @erb = erb
     end
