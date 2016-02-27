@@ -1,24 +1,22 @@
 require_relative '../../html_to_haml'
 require_relative '../../helpers/haml_whitespace_cleaner'
-require_relative '../../tools/script/indentation_tracker'
+require_relative '../../tools/non_html_selector_blocks/indentation_tracker'
 
 module HtmlToHaml
-  module Script
+  module NonHtmlSelectorBlocks
     class BasicConversionUseCase
       include HtmlToHaml::HamlWhitespaceCleaner
 
-      HTML_TAG_NAME = "script"
       TAG_TYPE_REGEX = "type=('|\")(.*?)('|\")"
       TAG_TYPE_FROM_REGEX = '\2'
-      DEFAULT_TAG_TYPE = "javascript"
 
       def initialize(js_html)
         @js_html = js_html
       end
 
       def convert
-        indentation_tracker = Script::IndentationTracker.new(indented: false, adjust_whitespace: false)
-        haml = @js_html.gsub(/<#{HTML_TAG_NAME}.*?>|<\/#{HTML_TAG_NAME}>|(\n\s*)/) do |tag|
+        indentation_tracker = IndentationTracker.new(indented: false, adjust_whitespace: false)
+        haml = @js_html.gsub(/<#{self.class::HTML_TAG_NAME}.*?>|<\/#{self.class::HTML_TAG_NAME}>|(\n\s*)/) do |tag|
           replace_tag_value(tag: tag, indentation_tracker: indentation_tracker)
         end
         remove_haml_whitespace(haml: haml)
@@ -39,7 +37,7 @@ module HtmlToHaml
       end
 
       def opening_tag?(tag:, indented:)
-        !indented && tag =~ /<#{HTML_TAG_NAME}.*?>/
+        !indented && tag =~ /<#{self.class::HTML_TAG_NAME}.*?>/
       end
 
       def open_tag(tag:, indentation_tracker:)
@@ -52,7 +50,7 @@ module HtmlToHaml
       end
 
       def closing_tag?(tag:, indented:)
-        indented && tag =~ /<\/#{HTML_TAG_NAME}>/
+        indented && tag =~ /<\/#{self.class::HTML_TAG_NAME}>/
       end
 
       def close_tag(indentation_tracker:)
@@ -66,12 +64,12 @@ module HtmlToHaml
       end
 
       def tag_type(tag:)
-        specified_tag_type(tag: tag) || DEFAULT_TAG_TYPE
+        specified_tag_type(tag: tag) || self.class::DEFAULT_TAG_TYPE
       end
 
       def specified_tag_type(tag:)
-        type_match = tag.match(/#{TAG_TYPE_REGEX}/)
-        type_match && type_match.to_s.gsub(/#{TAG_TYPE_REGEX}/, TAG_TYPE_FROM_REGEX).split('/').last
+        type_match = tag.match(/#{self.class::TAG_TYPE_REGEX}/)
+        type_match && type_match.to_s.gsub(/#{self.class::TAG_TYPE_REGEX}/, self.class::TAG_TYPE_FROM_REGEX).split('/').last
       end
 
       def indentation

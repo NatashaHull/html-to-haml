@@ -1,7 +1,16 @@
 require 'rspec'
-require_relative '../../../../lib/html_to_haml/use_cases/script/basic_conversion_use_case'
+require_relative '../../../../lib/html_to_haml/use_cases/non_html_selector_blocks/basic_conversion_use_case'
 
-describe HtmlToHaml::Script::BasicConversionUseCase do
+module HtmlToHaml::NonHtmlSelectorBlocks
+  class TestCase < BasicConversionUseCase
+    HTML_TAG_NAME = "script"
+    TAG_TYPE_REGEX = "type=('|\")(.*?)('|\")"
+    TAG_TYPE_FROM_REGEX = '\2'
+    DEFAULT_TAG_TYPE = "javascript"
+  end
+end
+
+describe HtmlToHaml::NonHtmlSelectorBlocks::TestCase do
   subject { described_class.new(@js_html).convert }
 
   context 'syntax' do

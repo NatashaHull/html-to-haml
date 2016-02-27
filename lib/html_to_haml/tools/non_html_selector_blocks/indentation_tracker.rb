@@ -1,5 +1,5 @@
 module HtmlToHaml
-  module Script
+  module NonHtmlSelectorBlocks
     class IndentationTracker
       attr_reader :indented, :adjust_whitespace
 
