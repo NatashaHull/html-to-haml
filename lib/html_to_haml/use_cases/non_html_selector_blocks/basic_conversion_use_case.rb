@@ -10,13 +10,13 @@ module HtmlToHaml
       TAG_TYPE_REGEX = "type=('|\")(.*?)('|\")"
       TAG_TYPE_FROM_REGEX = '\2'
 
-      def initialize(js_html)
-        @js_html = js_html
+      def initialize(special_html)
+        @special_html = special_html
       end
 
       def convert
         indentation_tracker = IndentationTracker.new(indented: false, adjust_whitespace: false)
-        haml = @js_html.gsub(/<#{self.class::HTML_TAG_NAME}.*?>|<\/#{self.class::HTML_TAG_NAME}>|(\n\s*)/) do |tag|
+        haml = @special_html.gsub(/#{opening_tag_regex}|#{closing_tag_regex}|(\n\s*)/) do |tag|
           replace_tag_value(tag: tag, indentation_tracker: indentation_tracker)
         end
         remove_haml_whitespace(haml: haml)
@@ -36,8 +36,8 @@ module HtmlToHaml
         end
       end
 
-      def opening_tag?(tag:, indented:)
-        !indented && tag =~ /<#{self.class::HTML_TAG_NAME}.*?>/
+      def opening_tag?(tag:, in_block:)
+        !in_block && tag =~ /#{opening_tag_regex}/
       end
 
       def open_tag(tag:, indentation_tracker:)
@@ -49,13 +49,21 @@ module HtmlToHaml
         ":#{tag_type(tag: tag)}\n#{indentation}"
       end
 
-      def closing_tag?(tag:, indented:)
-        indented && tag =~ /<\/#{self.class::HTML_TAG_NAME}>/
+      def opening_tag_regex
+        "<#{self.class::HTML_TAG_NAME}.*?>"
+      end
+
+      def closing_tag?(tag:, in_block:)
+        in_block && tag =~ /#{closing_tag_regex}/
       end
 
       def close_tag(indentation_tracker:)
         indentation_tracker.outdent
         "\n"
+      end
+
+      def closing_tag_regex
+        "<\/#{self.class::HTML_TAG_NAME}>"
       end
 
       def adjust_whitespace?(indentation_tracker:, tag:)
