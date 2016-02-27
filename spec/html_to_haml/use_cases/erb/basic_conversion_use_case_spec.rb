@@ -39,17 +39,17 @@ describe HtmlToHaml::Erb::BasicConversionUseCase do
   end
 
   context 'multi-line erb statements' do
-    it 'does not change newlines when they are outside of an erb statement' do
+    it 'does not change newlines or spacing when they are outside of an erb statement' do
       @erb = <<-ERB
 <htmlStuff> Some text
-with random  newlines and
+  with random  newlines and
 <%= "spacing" -%>
 </htmlStuff>
       ERB
 
       expected_haml = <<-HAML
 <htmlStuff> Some text
-with random  newlines and
+  with random  newlines and
 = "spacing"
 </htmlStuff>
       HAML

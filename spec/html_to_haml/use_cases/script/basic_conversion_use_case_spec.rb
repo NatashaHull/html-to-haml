@@ -1,7 +1,7 @@
 require 'rspec'
-require_relative '../../../lib/html_to_haml/use_cases/basic_script_conversion_use_case'
+require_relative '../../../../lib/html_to_haml/use_cases/script/basic_conversion_use_case'
 
-describe HtmlToHaml::BasicScriptConversionUseCase do
+describe HtmlToHaml::Script::BasicConversionUseCase do
   subject { described_class.new(@js_html).convert }
 
   context 'syntax' do
@@ -12,7 +12,7 @@ describe HtmlToHaml::BasicScriptConversionUseCase do
     end
 
     it 'turns script tags with a type into haml tags with that type' do
-      @js_html = '<script type="randomType"></script>'
+      @js_html = '<script type="application/randomType"></script>'
 
       expect(subject).to eq(":randomType\n")
     end
