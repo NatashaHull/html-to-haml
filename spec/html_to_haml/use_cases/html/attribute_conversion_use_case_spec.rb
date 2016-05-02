@@ -48,5 +48,37 @@ describe HtmlToHaml::Html::AttributeConversionUseCase do
 
       expect(subject).to eq(expected_haml)
     end
+
+    it 'handles attributes that were set with non-erb and erb values' do
+      @html = <<-HTML
+%html attr1="attribute 1" attr2="attribute-first-value
+  =attribute2
+"
+  Html content
+      HTML
+
+      expected_haml = <<-HAML
+%html{ attr1: "attribute 1", attr2: "attribute-first-value \#{attribute2}" }
+  Html content
+      HAML
+
+      expect(subject).to eq(expected_haml)
+    end
+
+    it 'correctly handles cases with erb attributes before other attributes' do
+      @html = <<-HTML
+%html attr1="attribute 1" attr2="attribute-first-value
+  =attribute2
+attr-third-value" attr3="attribute 3"
+  Html content
+      HTML
+
+      expected_haml = <<-HAML
+%html{ attr1: "attribute 1", attr2: "attribute-first-value \#{attribute2} attr-third-value", attr3: "attribute 3" }
+  Html content
+      HAML
+
+      expect(subject).to eq(expected_haml)
+    end
   end
 end

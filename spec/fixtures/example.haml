@@ -1,5 +1,5 @@
 %html
-  %body{ style: 'background-color: white;', class: class_name }
+  %body{ style: 'background-color: white;', class: "simple-class #{class_name}" }
     - random_array_of_stuff.each do |arr_elem|
       - if arr_elem
         - case arr_elem
