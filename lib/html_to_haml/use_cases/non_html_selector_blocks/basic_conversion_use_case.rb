@@ -25,9 +25,9 @@ module HtmlToHaml
       private
 
       def replace_tag_value(tag:, indentation_tracker:)
-        if opening_tag?(tag: tag, indented: indentation_tracker.indented)
+        if opening_tag?(tag: tag, in_block: indentation_tracker.indented)
           open_tag(tag: tag, indentation_tracker: indentation_tracker)
-        elsif closing_tag?(tag: tag, indented: indentation_tracker.indented)
+        elsif closing_tag?(tag: tag, in_block: indentation_tracker.indented)
           close_tag(indentation_tracker: indentation_tracker)
         elsif adjust_whitespace?(tag: tag, indentation_tracker: indentation_tracker)
           "#{tag}#{indentation}"
