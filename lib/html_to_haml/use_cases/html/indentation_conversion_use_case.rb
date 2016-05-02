@@ -21,7 +21,7 @@ module HtmlToHaml::Html
 
     def convert
       indentation_level = 0
-      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|<|>|\n/) do |matched_elem, idx|
+      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|<|>|\n/) do |matched_elem|
         indentation_level = adjusted_indentation_level(html: matched_elem, indentation_level: indentation_level)
         indentation = " " * indentation_level
         case matched_elem

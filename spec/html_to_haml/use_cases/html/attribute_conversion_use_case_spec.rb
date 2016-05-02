@@ -31,6 +31,22 @@ describe HtmlToHaml::Html::AttributeConversionUseCase do
       HAML
 
       expect(subject).to eq(expected_haml)
+      end
+
+    it 'handles formerly erb attributes that have partially gone through the converter' do
+      @html = <<-HTML
+%html attr1="attribute 1" attr2="
+  =attribute2
+"
+  Html content
+      HTML
+
+      expected_haml = <<-HAML
+%html{ attr1: "attribute 1", attr2: attribute2 }
+  Html content
+      HAML
+
+      expect(subject).to eq(expected_haml)
     end
   end
 end
