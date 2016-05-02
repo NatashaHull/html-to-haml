@@ -2,8 +2,8 @@ require 'rspec'
 require_relative '../../../../lib/html_to_haml/use_cases/html/attribute_conversion_use_case'
 
 describe HtmlToHaml::Html::AttributeConversionUseCase do
-  describe '#convert' do
-    subject { described_class.new(@html).convert }
+  describe '#convert_attributes' do
+    subject { described_class.instance.convert_attributes(html: @html) }
 
     it 'does nothing to haml without attributes' do
       @html = (<<-HTML).strip

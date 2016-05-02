@@ -11,7 +11,7 @@ module HtmlToHaml::Html
 
     def convert
       haml = IndentationConversionUseCase.new(@html, remove_whitespace: @remove_whitespace).convert
-      AttributeConversionUseCase.new(haml).convert
+      AttributeConversionUseCase.instance.convert_attributes(html: haml)
     end
   end
 end
