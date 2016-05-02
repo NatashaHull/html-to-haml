@@ -1,7 +1,7 @@
 require 'rspec'
-require_relative '../../../lib/html_to_haml/use_cases/basic_html_conversion_use_case'
+require_relative '../../../../lib/html_to_haml/use_cases/html/indentation_conversion_use_case'
 
-describe HtmlToHaml::BasicHtmlConversionUseCase do
+describe HtmlToHaml::Html::IndentationConversionUseCase do
   describe '#convert' do
     subject { described_class.new(@html).convert }
 

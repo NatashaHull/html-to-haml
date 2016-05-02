@@ -1,8 +1,8 @@
-require_relative '../html_to_haml'
-require_relative '../helpers/haml_whitespace_cleaner'
+require_relative '../../html_to_haml'
+require_relative '../../helpers/haml_whitespace_cleaner'
 
-module HtmlToHaml
-  class BasicHtmlConversionUseCase
+module HtmlToHaml::Html
+  class IndentationConversionUseCase
     include HtmlToHaml::HamlWhitespaceCleaner
 
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
@@ -41,9 +41,9 @@ module HtmlToHaml
     def adjusted_indentation_level(html:, indentation_level:)
       case html
         when /#{CLOSING_HTML_REGEX}/
-          indentation_level - INDENTATION_AMOUNT
+          indentation_level - HtmlToHaml::INDENTATION_AMOUNT
         when ">"
-          indentation_level + INDENTATION_AMOUNT
+          indentation_level + HtmlToHaml::INDENTATION_AMOUNT
         else
           indentation_level
       end

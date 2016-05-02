@@ -1,7 +1,7 @@
-require_relative '../html_to_haml'
+require_relative '../../html_to_haml'
 
-module HtmlToHaml
-  class HtmlAttributeConversionUseCase
+module HtmlToHaml::Html
+  class AttributeConversionUseCase
     def initialize(html)
       @html = html
     end

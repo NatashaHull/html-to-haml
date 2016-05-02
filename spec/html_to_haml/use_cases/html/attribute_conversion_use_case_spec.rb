@@ -1,7 +1,7 @@
 require 'rspec'
-require_relative '../../../lib/html_to_haml/use_cases/html_attribute_conversion_use_case'
+require_relative '../../../../lib/html_to_haml/use_cases/html/attribute_conversion_use_case'
 
-describe HtmlToHaml::HtmlAttributeConversionUseCase do
+describe HtmlToHaml::Html::AttributeConversionUseCase do
   describe '#convert' do
     subject { described_class.new(@html).convert }
 
