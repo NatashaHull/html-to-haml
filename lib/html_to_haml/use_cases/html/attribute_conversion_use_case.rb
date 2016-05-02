@@ -19,7 +19,7 @@ module HtmlToHaml::Html
 
     def haml_with_replaced_attributes(haml:)
       attributes_hash = []
-      haml_without_attributes = haml.gsub(/\s+([a-zA-Z1-9]+?)=('|").*?('|")/) do |matched_elem|
+      haml_without_attributes = haml.gsub(/\s*([a-zA-Z1-9]+?)=('|").*?('|")/) do |matched_elem|
         attr = escape_erb_attributes(attr: matched_elem)
         attributes_hash << attr.strip.gsub(/=/, ': ')
         ''
