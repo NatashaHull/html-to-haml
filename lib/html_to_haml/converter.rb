@@ -1,4 +1,5 @@
 require_relative './use_cases/basic_html_conversion_use_case'
+require_relative './use_cases/html_attribute_conversion_use_case'
 require_relative './use_cases/erb/basic_conversion_use_case'
 require_relative './use_cases/non_html_selector_blocks/style_conversion_use_case'
 require_relative './use_cases/non_html_selector_blocks/script_conversion_use_case'
@@ -14,7 +15,8 @@ module HtmlToHaml
       erb_converted_haml = Erb::BasicConversionUseCase.new(whitespace_free_html).convert
       haml = NonHtmlSelectorBlocks::StyleConversionUseCase.new(erb_converted_haml).convert
       haml = NonHtmlSelectorBlocks::ScriptConversionUseCase.new(haml).convert
-      BasicHtmlConversionUseCase.new(haml, remove_whitespace: false).convert
+      haml = BasicHtmlConversionUseCase.new(haml, remove_whitespace: false).convert
+      HtmlAttributeConversionUseCase.new(haml).convert
     end
 
     private
