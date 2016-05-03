@@ -23,6 +23,16 @@ describe HtmlToHaml::Html::AttributeHandler do
       expect(subject.attributes_string).to eq('#simple-id')
     end
 
+    it 'handles single quotes' do
+      subject.add_attribute(attr: "id='simple-id'")
+      expect(subject.attributes_string).to eq('#simple-id')
+    end
+
+    it 'generates a # separated string for an attribute with mutliple simple ids' do
+      subject.add_attribute(attr: 'id="simple-id1 simple-id2"')
+      expect(subject.attributes_string).to eq('#simple-id1#simple-id2')
+    end
+
     it 'generates a regular attributes string for the id if it is not in quotes' do
       subject.add_attribute(attr: 'id=erb-id')
       expect(subject.attributes_string).to eq('{ id: erb-id }')
@@ -38,6 +48,16 @@ describe HtmlToHaml::Html::AttributeHandler do
     it 'generates a string using the . syntax for simple classes' do
       subject.add_attribute(attr: 'class="simple-class"')
       expect(subject.attributes_string).to eq('.simple-class')
+    end
+
+    it 'handles single quotes' do
+      subject.add_attribute(attr: "class='simple-class'")
+      expect(subject.attributes_string).to eq('.simple-class')
+    end
+
+    it 'generates a . separated string for an attribute with mutliple simple classes' do
+      subject.add_attribute(attr: 'class="simple-class1 simple-class2"')
+      expect(subject.attributes_string).to eq('.simple-class1.simple-class2')
     end
 
     it 'generates a regular attributes string for the class if it is not in quotes' do

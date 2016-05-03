@@ -1,6 +1,8 @@
 module HtmlToHaml
   module Html
     class AttributeHandler
+      HTML_ONLY_ATTRIBUTE_REGEX = /=['"][^#\{]*['"]/
+
       def initialize
         @ids = []
         @classes = []
@@ -9,9 +11,9 @@ module HtmlToHaml
 
       def add_attribute(attr:)
         if use_id_syntax?(attr: attr)
-          @ids << extract_attribute_value(attr: attr)
+          @ids += extract_attribute_value(attr: attr).split(' ')
         elsif use_class_syntax?(attr: attr)
-          @classes << extract_attribute_value(attr: attr)
+          @classes += extract_attribute_value(attr: attr).split(' ')
         else
           @plain_attributes << attr.strip.gsub(/=/, ': ')
         end
@@ -24,15 +26,15 @@ module HtmlToHaml
       private
 
       def use_id_syntax?(attr:)
-        attr =~ /id="[^#\{]*"/
+        attr =~ /id#{HTML_ONLY_ATTRIBUTE_REGEX}/
       end
 
       def use_class_syntax?(attr:)
-        attr =~ /class="[^#\{]*"/
+        attr =~ /class#{HTML_ONLY_ATTRIBUTE_REGEX}/
       end
 
       def extract_attribute_value(attr:)
-        attr.gsub(/.*="(.*)"/, '\1').strip
+        attr.gsub(/.*=['"](.*)['"]/, '\1').strip
       end
 
       def format_attributes
