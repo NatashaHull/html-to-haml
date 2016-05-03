@@ -23,8 +23,8 @@ module HtmlToHaml
       html.gsub(/#{html_with_important_whitespace}|^\s*|\n/) do |matching_html|
         case matching_html
           when /#{html_with_important_whitespace}/
-            initial_indentation = matching_html.match(/^\s*/).to_s
-            matching_html.gsub(/#{initial_indentation}/, "\n")
+            initial_indentation = matching_html.gsub("\n", '').match(/^\s*/).to_s
+            matching_html.gsub(/^#{initial_indentation}/, "\n")
           else
             ""
         end
