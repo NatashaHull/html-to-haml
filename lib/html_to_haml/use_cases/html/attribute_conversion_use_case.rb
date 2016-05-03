@@ -1,5 +1,6 @@
 require 'singleton'
 require_relative '../../html_to_haml'
+require_relative '../../tools/html/attribute_handler'
 
 module HtmlToHaml::Html
   class AttributeConversionUseCase
@@ -18,45 +19,13 @@ module HtmlToHaml::Html
     private
 
     def haml_with_replaced_attributes(haml:)
-      attributes_arr = []
-      ids = []
-      classes = []
+      attribute_handler = AttributeHandler.new
       haml_without_attributes = haml.gsub(/\s*([a-zA-Z1-9]+?)=('|").*?('|")/) do |matched_elem|
         attr = escape_erb_attributes(attr: matched_elem)
-        if use_id_syntax?(attr: attr)
-          ids << extract_attribute_value(attr: attr)
-        elsif use_class_syntax?(attr: attr)
-          classes << extract_attribute_value(attr: attr)
-        else
-          attributes_arr << attr.strip.gsub(/=/, ': ')
-        end
+        attribute_handler.add_attribute(attr: attr)
         ''
       end
-      "#{haml_without_attributes}#{format_ids(ids: ids)}#{format_classes(classes: classes)}#{format_attributes(attributes_arr: attributes_arr)}"
-    end
-
-    def format_classes(classes:)
-      classes.empty? ? '' : ".#{classes.join('.')}"
-    end
-
-    def use_class_syntax?(attr: attr)
-      attr =~ /class="[^#\{]*"/
-    end
-
-    def format_attributes(attributes_arr:)
-      attributes_arr.empty? ? '' : "{ #{attributes_arr.join(', ')} }"
-    end
-
-    def format_ids(ids:)
-      ids.empty? ? '' : "##{ids.join('#')}"
-    end
-
-    def extract_attribute_value(attr:)
-      attr.gsub(/.*="(.*)"/, '\1').strip
-    end
-
-    def use_id_syntax?(attr:)
-      attr =~ /id="[^#\{]*"/
+      "#{haml_without_attributes}#{attribute_handler.attributes_string}"
     end
 
     def remove_erb_newlines(html:)
