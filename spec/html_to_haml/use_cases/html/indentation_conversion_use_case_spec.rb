@@ -71,6 +71,36 @@ Plainy plain text
       end
     end
 
+    context 'self-closing html tags' do
+      it 'does not change the indentation for pre-defined self-closing html tags' do
+        @html = (<<-HTML).strip
+<img src="example source" alt="sample alt">
+Some random text that shouldn't be indented
+        HTML
+
+        expected_haml = (<<-HAML).strip
+%img src=\"example source\" alt=\"sample alt\"
+Some random text that shouldn't be indented
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+
+      it 'does not change the indentation for html tags that are self closing using the /> syntax' do
+        @html = <<-HTML
+<html-stuff/>
+Plainy plain text
+        HTML
+
+        expected_haml = (<<-HAML).strip
+%html-stuff
+Plainy plain text
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
+
     context 'There are multiple html tags' do
       it 'returns both tags with a newline if there is no content' do
         @html = (<<-HTML).strip
