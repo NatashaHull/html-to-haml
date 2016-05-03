@@ -21,6 +21,8 @@ module HtmlToHaml::Html
     def haml_with_replaced_attributes(haml:)
       attribute_handler = AttributeHandler.new
       haml_without_attributes = haml.gsub(/\s*([a-zA-Z1-9]+?)=('|").*?('|")/) do |matched_elem|
+        # This could go into the AttributeHandler, but at the moment this is the only place
+        # that is aware of the erb syntax and that makes the AttributeHandler more isolated.
         attr = escape_erb_attributes(attr: matched_elem)
         attribute_handler.add_attribute(attr: attr)
         ''
