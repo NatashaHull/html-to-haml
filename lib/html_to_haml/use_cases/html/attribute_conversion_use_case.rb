@@ -18,13 +18,45 @@ module HtmlToHaml::Html
     private
 
     def haml_with_replaced_attributes(haml:)
-      attributes_hash = []
+      attributes_arr = []
+      ids = []
+      classes = []
       haml_without_attributes = haml.gsub(/\s*([a-zA-Z1-9]+?)=('|").*?('|")/) do |matched_elem|
         attr = escape_erb_attributes(attr: matched_elem)
-        attributes_hash << attr.strip.gsub(/=/, ': ')
+        if use_id_syntax?(attr: attr)
+          ids << extract_attribute_value(attr: attr)
+        elsif use_class_syntax?(attr: attr)
+          classes << extract_attribute_value(attr: attr)
+        else
+          attributes_arr << attr.strip.gsub(/=/, ': ')
+        end
         ''
       end
-      attributes_hash.empty? ? haml_without_attributes : "#{haml_without_attributes}{ #{attributes_hash.join(', ')} }"
+      "#{haml_without_attributes}#{format_ids(ids: ids)}#{format_classes(classes: classes)}#{format_attributes(attributes_arr: attributes_arr)}"
+    end
+
+    def format_classes(classes:)
+      classes.empty? ? '' : ".#{classes.join('.')}"
+    end
+
+    def use_class_syntax?(attr: attr)
+      attr =~ /class="[^#\{]*"/
+    end
+
+    def format_attributes(attributes_arr:)
+      attributes_arr.empty? ? '' : "{ #{attributes_arr.join(', ')} }"
+    end
+
+    def format_ids(ids:)
+      ids.empty? ? '' : "##{ids.join('#')}"
+    end
+
+    def extract_attribute_value(attr:)
+      attr.gsub(/.*="(.*)"/, '\1').strip
+    end
+
+    def use_id_syntax?(attr:)
+      attr =~ /id="[^#\{]*"/
     end
 
     def remove_erb_newlines(html:)

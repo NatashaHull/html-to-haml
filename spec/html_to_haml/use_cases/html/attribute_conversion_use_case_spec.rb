@@ -80,5 +80,71 @@ attr-third-value" attr3="attribute 3"
 
       expect(subject).to eq(expected_haml)
     end
+
+    context 'ids' do
+      it 'uses the # syntax for simple ids' do
+        @html = <<-HTML
+  %html attr1="attribute 1" id="id-value"
+    Html content
+        HTML
+
+        expected_haml = <<-HAML
+  %html#id-value{ attr1: "attribute 1" }
+    Html content
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+
+
+      it 'does not use the # syntax for ids that have erb in them' do
+
+        @html = <<-HTML
+%html attr1="attribute 1" id="
+  =id-value
+"
+  Html content
+        HTML
+
+        expected_haml = <<-HAML
+%html{ attr1: "attribute 1", id: id-value }
+  Html content
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
+
+    context 'classes' do
+      it 'uses the . syntax for simple classes' do
+        @html = <<-HTML
+%html attr1="attribute 1" class="class-value"
+  Html content
+        HTML
+
+        expected_haml = <<-HAML
+%html.class-value{ attr1: "attribute 1" }
+  Html content
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+
+      it 'does not use the . syntax for classes that have erb in them' do
+        @html = <<-HTML
+%html attr1="attribute 1" class="
+  =class-value
+"
+  Html content
+        HTML
+
+        expected_haml = <<-HAML
+%html{ attr1: "attribute 1", class: class-value }
+  Html content
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
   end
 end
