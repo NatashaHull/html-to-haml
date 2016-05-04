@@ -3,7 +3,7 @@ require_relative '../../helpers/haml_whitespace_cleaner'
 require_relative '../../tools/html/indentation_tracker'
 
 module HtmlToHaml::Html
-  class IndentationConversionUseCase
+  class DefaultConversionUseCase
     include HtmlToHaml::HamlWhitespaceCleaner
 
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
