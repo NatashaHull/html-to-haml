@@ -1,7 +1,7 @@
 require 'rspec'
-require_relative '../../../../lib/html_to_haml/use_cases/erb/convert_indentation_use_case'
+require_relative '../../../../lib/html_to_haml/use_cases/erb/indentation_conversion_use_case'
 
-describe HtmlToHaml::Erb::ConvertIndentationUseCase do
+describe HtmlToHaml::Erb::IndentationConversionUseCase do
   subject { described_class.instance.convert_indentation(erb: @erb) }
 
   context 'control flow' do

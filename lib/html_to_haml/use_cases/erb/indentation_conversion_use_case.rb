@@ -4,7 +4,7 @@ require_relative '../../tools/erb/indentation_tracker'
 require_relative '../../tools/erb/control_flow_matcher'
 
 module HtmlToHaml::Erb
-  class ConvertIndentationUseCase
+  class IndentationConversionUseCase
     include Singleton
     extend Forwardable
 
