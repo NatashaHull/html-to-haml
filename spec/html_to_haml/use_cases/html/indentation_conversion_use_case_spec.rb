@@ -175,6 +175,20 @@ Some random text that shouldn't be indented
 
           expect(subject).to eq(expected_haml)
         end
+
+        it 'raises a specific error if the html tries to unindent into negative spaces' do
+          @html = (<<-HTML).strip
+<htmlTag1>
+  Some content here
+  <nestedHtmlTag>
+    Some nested content there
+  </nestedHtmlTag>
+</htmlTag1>
+</htmlTagClosingWithoutOpening>
+          HTML
+
+          expect{ subject }.to raise_error(HtmlToHaml::Html::ParseError)
+        end
       end
     end
   end

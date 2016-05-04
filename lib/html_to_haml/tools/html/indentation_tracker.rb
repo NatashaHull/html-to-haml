@@ -1,6 +1,9 @@
 require_relative '../../html_to_haml'
 
 module HtmlToHaml::Html
+  class ParseError < RuntimeError
+  end
+
   class IndentationTracker
     def initialize(indentation_amount:)
       @indentation_level = 0
@@ -19,6 +22,9 @@ module HtmlToHaml::Html
 
     def close_html_tag
       @indentation_level -= @indentation_amount
+      if @indentation_level < 0
+        raise ParseError, 'The html is malformed and is attempting to close an html tag that was never started'
+      end
     end
 
     def indentation

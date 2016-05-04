@@ -147,7 +147,7 @@ Random HTML string
         expect(subject).to eq(expected_haml)
       end
 
-      it 'raises a specific error if the erb tries to unindent beyond into negative numbers' do
+      it 'raises a specific error if the erb tries to unindent into negative spaces' do
         @erb = <<-ERB
 - when statement1_is_truthy
 = "some string"
