@@ -8,12 +8,19 @@ module HtmlToHaml::Erb
     include Singleton
     extend Forwardable
 
+    SNARKY_COMMENT_FOR_HAVING_NESTED_CASE_STATEMENTS = <<-HAML
+/ It looks like this is the start of a nested case statement
+/ Are you REALLY sure you want or need one? Really?
+/ This converter will convert it for you below, but you should
+/ seriously rethink your code right now.
+    HAML
+
     def convert_indentation(erb:)
       indentation_converter = new_indentation_converter
       erb.split("\n").map do |erb_line|
         indentation = indentation_for_line_or_error(erb: erb_line, indentation_level: indentation_converter.indentation_level)
         adjust_indentation_level(erb: erb_line, indentation_converter: indentation_converter)
-        "#{indentation}#{erb_line}\n" unless end_of_block?(erb: erb_line)
+        construct_haml_line(erb: erb_line, indentation: indentation, indentation_converter: indentation_converter)
       end.join
     end
 
@@ -48,6 +55,22 @@ module HtmlToHaml::Erb
       else
         indentation_level
       end
+    end
+
+    def construct_haml_line(erb:, indentation:, indentation_converter:)
+      indentation_adjusted_haml_line = "#{indentation}"
+      if begin_nested_case_statement?(erb: erb, indentation_converter: indentation_converter)
+        indentation_adjusted_haml_line << nested_case_statement_commentary(indentation: indentation)
+      end
+      indentation_adjusted_haml_line << "#{erb}\n" unless end_of_block?(erb: erb)
+    end
+
+    def begin_nested_case_statement?(erb:, indentation_converter:)
+      begin_case_statement?(erb: erb) && indentation_converter.nested_case_statement?
+    end
+
+    def nested_case_statement_commentary(indentation:)
+      SNARKY_COMMENT_FOR_HAVING_NESTED_CASE_STATEMENTS.gsub("\n", "\n#{indentation}")
     end
 
     def new_indentation_converter

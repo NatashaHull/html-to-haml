@@ -116,6 +116,10 @@ Plain text
         expected_haml = <<-HAML
 - case true
   - when statement1_is_truthy
+    / It looks like this is the start of a nested case statement
+    / Are you REALLY sure you want or need one? Really?
+    / This converter will convert it for you below, but you should
+    / seriously rethink your code right now.
     - case statement2_is_truthy
       - when true
         = "some string"
