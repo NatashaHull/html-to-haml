@@ -97,6 +97,38 @@ describe HtmlToHaml::Erb::ConvertIndentationUseCase do
         expect(subject).to eq(expected_haml)
       end
 
+      it 'properly indents nested case statements (even though this is a terrible terrible thing to do)' do
+        @erb = <<-ERB
+- case true
+- when statement1_is_truthy
+- case statement2_is_truthy
+- when true
+= "some string"
+- else
+= "a different string"
+- end
+- else
+= "catpicks are cool"
+- end
+Plain text
+        ERB
+
+        expected_haml = <<-HAML
+- case true
+  - when statement1_is_truthy
+    - case statement2_is_truthy
+      - when true
+        = "some string"
+      - else
+        = "a different string"
+  - else
+    = "catpicks are cool"
+Plain text
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+
       it 'uses the correct haml indentation for unless statements' do
         @erb = <<-ERB
 - unless statement1_is_falsy

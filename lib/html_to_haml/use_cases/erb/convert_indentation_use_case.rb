@@ -51,7 +51,7 @@ module HtmlToHaml::Erb
     end
 
     def new_indentation_converter
-      IndentationTracker.new(indentation_level: 0, case_statement_level: -1, indentation_amount: HtmlToHaml::INDENTATION_AMOUNT)
+      IndentationTracker.new(indentation_level: 0, indentation_amount: HtmlToHaml::INDENTATION_AMOUNT)
     end
 
     def control_flow_matcher
