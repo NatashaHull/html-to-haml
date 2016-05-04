@@ -4,6 +4,9 @@ require_relative '../../tools/erb/indentation_tracker'
 require_relative '../../tools/erb/control_flow_matcher'
 
 module HtmlToHaml::Erb
+  class ParseError < StandardError
+  end
+
   class ConvertIndentationUseCase
     include Singleton
     extend Forwardable
@@ -11,7 +14,7 @@ module HtmlToHaml::Erb
     def convert_indentation(erb:)
       indentation_converter = new_indentation_converter
       erb.split("\n").map do |erb_line|
-        indentation = " " * adjusted_indentation_level_for_line(erb: erb_line, indentation_level: indentation_converter.indentation_level)
+        indentation = indentation_for_line_or_error(erb: erb_line, indentation_level: indentation_converter.indentation_level)
         adjust_indentation_level(erb: erb_line, indentation_converter: indentation_converter)
         "#{indentation}#{erb_line}\n" unless end_of_block?(erb: erb_line)
       end.join
@@ -30,6 +33,15 @@ module HtmlToHaml::Erb
         indentation_converter.add_indentation
       elsif end_of_block?(erb: erb)
         indentation_converter.end_block
+      end
+    end
+
+    def indentation_for_line_or_error(erb:, indentation_level:)
+      adjusted_indentation_level = adjusted_indentation_level_for_line(erb: erb, indentation_level: indentation_level)
+      if adjusted_indentation_level < 0
+        raise ParseError, 'The erb is malformed. Please make sure you have the correct number of "end" statements'
+      else
+        " " * adjusted_indentation_level
       end
     end
 

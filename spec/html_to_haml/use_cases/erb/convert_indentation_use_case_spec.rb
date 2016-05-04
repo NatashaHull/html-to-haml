@@ -147,8 +147,7 @@ Random HTML string
         expect(subject).to eq(expected_haml)
       end
 
-      # TODO: implement the code for this. (It's not technically part of what I'm working on, but seems important.)
-      xit 'raises a specific error if the erb tries to unindent beyond into negative numbers' do
+      it 'raises a specific error if the erb tries to unindent beyond into negative numbers' do
         @erb = <<-ERB
 - when statement1_is_truthy
 = "some string"
@@ -159,7 +158,7 @@ Random HTML string
 - end
         ERB
 
-        expect(subject).to raise_error(HtmlToHaml::ErbParseError)
+        expect{ subject }.to raise_error(HtmlToHaml::Erb::ParseError)
       end
     end
 
