@@ -1,5 +1,6 @@
 %html
   %body#id-for-html{ style: 'background-color: white;', class: class_name }
+    / Testing for control flow in erb below
     - random_array_of_stuff.each do |arr_elem|
       - if arr_elem
         - case arr_elem
@@ -18,8 +19,10 @@
       - else
         Random html text
         = "Random erb string"
+    / Testing for self-closing tags below
     %img{ src: "sample-photo.example.com", alt: "example photo for self-closing tag" }
     %script{ src: "http://my-js-source.example.com" }
+    / Testing for script/style tags below
     :coffeescript
       if conditionIsTruthy
         someRandomVar = "String"

@@ -1,5 +1,6 @@
 require_relative '../../html_to_haml'
 require_relative './attribute_conversion_use_case'
+require_relative './comment_conversion_use_case'
 require_relative './indentation_conversion_use_case'
 
 module HtmlToHaml::Html
@@ -10,7 +11,8 @@ module HtmlToHaml::Html
     end
 
     def convert
-      haml = IndentationConversionUseCase.new(@html, remove_whitespace: @remove_whitespace).convert
+      html_with_haml_comments = CommentConversionUseCase.new(@html).convert
+      haml = IndentationConversionUseCase.new(html_with_haml_comments, remove_whitespace: @remove_whitespace).convert
       AttributeConversionUseCase.instance.convert_attributes(html: haml)
     end
   end

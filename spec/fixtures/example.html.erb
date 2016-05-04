@@ -2,6 +2,7 @@
   <body style='background-color: white;'
         class="<%= class_name %>"
         id="id-for-html">
+    <!-- Testing for control flow in erb below -->
     <% random_array_of_stuff.each do |arr_elem| %>
       <% if arr_elem %>
         <% case arr_elem %>
@@ -18,8 +19,10 @@
       <% end %>
     <% end %>
 
+    <!-- Testing for self-closing tags below -->
     <img src="sample-photo.example.com" alt="example photo for self-closing tag">
     <script src="http://my-js-source.example.com"/>
+    <!-- Testing for script/style tags below -->
     <script type="text/coffeescript">
       if conditionIsTruthy
         someRandomVar = "String"
