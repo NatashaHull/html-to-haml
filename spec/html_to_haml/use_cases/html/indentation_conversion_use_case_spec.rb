@@ -99,6 +99,20 @@ Plainy plain text
 
         expect(subject).to eq(expected_haml)
       end
+
+      it 'works for html tags that are self-closing by default and that have the /> syntax' do
+        @html = (<<-HTML).strip
+<img src="example source" alt="sample alt"/>
+Some random text that shouldn't be indented
+        HTML
+
+        expected_haml = (<<-HAML).strip
+%img src=\"example source\" alt=\"sample alt\"
+Some random text that shouldn't be indented
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
     end
 
     context 'There are multiple html tags' do

@@ -1,5 +1,6 @@
 require_relative '../../html_to_haml'
 require_relative '../../helpers/haml_whitespace_cleaner'
+require_relative '../../tools/html/indentation_tracker'
 
 module HtmlToHaml::Html
   class IndentationConversionUseCase
@@ -7,6 +8,7 @@ module HtmlToHaml::Html
 
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
     CLOSING_HTML_REGEX = "<\/.*?>"
+    # For self-closing html tags that aren't self-closing by default
     SELF_CLOSING_HTML_REGEX = "\/>"
     SELF_CLOSING_TAGS = %w(area base br col command embed hr img input keygen link meta param source track wbr)
 
@@ -22,24 +24,19 @@ module HtmlToHaml::Html
     end
 
     def convert
-      indentation_level = 0
-      self_closing_tag = false
+      indentation_tracker = IndentationTracker.new(indentation_amount: HtmlToHaml::INDENTATION_AMOUNT)
       haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|#{SELF_CLOSING_HTML_REGEX}|#{self_closing_tag_regex}|<|>|\n/) do |matched_elem|
-        indentation_level = adjusted_indentation_level(html: matched_elem, indentation_level: indentation_level, self_closing_tag: self_closing_tag)
-        indentation = " " * indentation_level
+        adjust_indentation_level(html: matched_elem, indentation_tracker: indentation_tracker)
+        start_of_line = "\n#{indentation_tracker.indentation}"
         case matched_elem
           when /#{ERB_LINE_REGEX}/
-            "\n#{indentation}#{matched_elem[1..-1]}"
+            "#{start_of_line}#{matched_elem[1..-1]}"
           when /#{self_closing_tag_regex}/
-            self_closing_tag = true
-            "\n#{indentation}%#{matched_elem[1..-1]}"
+            "#{start_of_line}%#{matched_elem[1..-1]}"
           when "<"
-            "\n#{indentation}%"
-          when ">"
-            self_closing_tag = false
-            "\n#{indentation}"
+            "#{start_of_line}%"
           else
-            "\n#{indentation}"
+            start_of_line
         end
       end
       remove_haml_whitespace(haml: haml)
@@ -51,15 +48,14 @@ module HtmlToHaml::Html
 
     private
 
-    def adjusted_indentation_level(html:, indentation_level:, self_closing_tag: false)
+    def adjust_indentation_level(html:, indentation_tracker:)
       case html
         when /#{CLOSING_HTML_REGEX}/
-          indentation_level - HtmlToHaml::INDENTATION_AMOUNT
+          indentation_tracker.close_html_tag
+        when /#{self_closing_tag_regex}/
+          indentation_tracker.start_self_closing_tag
         when ">"
-          return indentation_level + HtmlToHaml::INDENTATION_AMOUNT unless self_closing_tag
-          indentation_level
-        else
-          indentation_level
+          indentation_tracker.start_html_tag
       end
     end
 
