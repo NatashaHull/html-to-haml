@@ -1,9 +1,6 @@
 require_relative '../../html_to_haml'
 
 module HtmlToHaml::Html
-  class ParseError < RuntimeError
-  end
-
   class IndentationTracker
     def initialize(indentation_amount:)
       @indentation_level = 0

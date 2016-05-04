@@ -4,9 +4,6 @@ require_relative '../../tools/erb/indentation_tracker'
 require_relative '../../tools/erb/control_flow_matcher'
 
 module HtmlToHaml::Erb
-  class ParseError < RuntimeError
-  end
-
   class ConvertIndentationUseCase
     include Singleton
     extend Forwardable
