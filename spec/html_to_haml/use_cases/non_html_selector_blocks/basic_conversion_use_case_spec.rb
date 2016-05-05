@@ -166,5 +166,48 @@ Random\nnew\nline Plain text
 
       expect(subject).to eq(expected_haml)
     end
+
+    context 'ruby haml inside the tag' do
+      it 'puts the ruby haml inside string interpolation' do
+        @js_html = <<-HTML
+<script>
+ = "erb syntax stuff"
+</script>
+<html-stuff>Some text here</html-stuff>
+- haml_erb_stuff
+Random\nnew\nline Plain text
+        HTML
+
+        expected_haml = <<-HAML
+:javascript
+  \#{"erb syntax stuff"}
+<html-stuff>Some text here</html-stuff>
+- haml_erb_stuff
+Random\nnew\nline Plain text
+        HAML
+        expect(subject).to eq(expected_haml)
+      end
+
+      it 'adds the correct amount of spacing when adding ruby back onto the previous line' do
+        @js_html = <<-HTML
+<script>
+  var jsVar =
+  = "erb syntax stuff"
+</script>
+<html-stuff>Some text here</html-stuff>
+- haml_erb_stuff
+Random\nnew\nline Plain text
+        HTML
+
+        expected_haml = <<-HAML
+:javascript
+  var jsVar =\#{"erb syntax stuff"}
+<html-stuff>Some text here</html-stuff>
+- haml_erb_stuff
+Random\nnew\nline Plain text
+        HAML
+        expect(subject).to eq(expected_haml)
+      end
+    end
   end
 end

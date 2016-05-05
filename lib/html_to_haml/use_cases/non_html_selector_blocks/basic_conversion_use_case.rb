@@ -9,6 +9,7 @@ module HtmlToHaml
 
       TAG_TYPE_REGEX = "type=('|\")(.*?)('|\")"
       TAG_TYPE_FROM_REGEX = '\2'
+      RUBY_HAML_REGEX = "\n\s*=.*\n"
 
       def initialize(special_html)
         @special_html = special_html
@@ -16,7 +17,7 @@ module HtmlToHaml
 
       def convert
         indentation_tracker = IndentationTracker.new(indented: false, adjust_whitespace: false)
-        haml = @special_html.gsub(/#{opening_tag_regex}|#{closing_tag_regex}|(\n\s*)/) do |tag|
+        haml = @special_html.gsub(/#{opening_tag_regex}|#{closing_tag_regex}|#{RUBY_HAML_REGEX}|(\n\s*)/) do |tag|
           replace_tag_value(tag: tag, indentation_tracker: indentation_tracker)
         end
         remove_haml_whitespace(haml: haml)
@@ -29,6 +30,8 @@ module HtmlToHaml
           open_tag(tag: tag, indentation_tracker: indentation_tracker)
         elsif closing_tag?(tag: tag, in_block: indentation_tracker.indented)
           close_tag(indentation_tracker: indentation_tracker)
+        elsif use_string_interpolation?(tag: tag, in_block: indentation_tracker.indented)
+          string_interpolated_ruby(tag: tag)
         elsif adjust_whitespace?(tag: tag, indentation_tracker: indentation_tracker)
           "#{tag}#{indentation}"
         else
@@ -64,6 +67,14 @@ module HtmlToHaml
 
       def closing_tag_regex
         "<\/#{self.class::HTML_TAG_NAME}>"
+      end
+
+      def use_string_interpolation?(tag:, in_block:)
+        in_block && tag =~ /#{RUBY_HAML_REGEX}/
+      end
+
+      def string_interpolated_ruby(tag:)
+        "\#{#{tag.strip[1..-1].strip}}"
       end
 
       def adjust_whitespace?(indentation_tracker:, tag:)
