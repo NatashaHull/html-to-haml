@@ -1,5 +1,11 @@
 %html
   %body#id-for-html{ style: 'background-color: white;', class: class_name }
+    %p
+      \/ Html that uses haml comment syntax
+    %p
+      \= Html that uses haml ruby syntax
+    %p
+      \- Html that uses haml ruby syntax
     / Testing for control flow in erb below
     - random_array_of_stuff.each do |arr_elem|
       - if arr_elem

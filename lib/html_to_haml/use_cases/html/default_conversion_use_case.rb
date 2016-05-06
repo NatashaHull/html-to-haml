@@ -6,6 +6,7 @@ module HtmlToHaml::Html
   class DefaultConversionUseCase
     include HtmlToHaml::HamlWhitespaceCleaner
 
+    HAML_SYMBOL_REGEX = ">\s*(\/|-|=)"
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
     CLOSING_HTML_REGEX = "<\/.*?>"
     # For self-closing html tags that aren't self-closing by default
@@ -25,7 +26,7 @@ module HtmlToHaml::Html
 
     def convert
       indentation_tracker = IndentationTracker.new(indentation_amount: HtmlToHaml::INDENTATION_AMOUNT)
-      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|#{SELF_CLOSING_HTML_REGEX}|#{self_closing_tag_regex}|<|>|\n/) do |matched_elem|
+      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|#{SELF_CLOSING_HTML_REGEX}|#{self_closing_tag_regex}|#{HAML_SYMBOL_REGEX}|<|>|\n/) do |matched_elem|
         adjust_indentation_level(html: matched_elem, indentation_tracker: indentation_tracker)
         start_of_line = "\n#{indentation_tracker.indentation}"
         case matched_elem
@@ -33,6 +34,8 @@ module HtmlToHaml::Html
             "#{start_of_line}#{matched_elem[1..-1]}"
           when /#{self_closing_tag_regex}/
             "#{start_of_line}%#{matched_elem[1..-1]}"
+          when /#{HAML_SYMBOL_REGEX}/
+            "#{start_of_line}#{matched_elem[1..-1].insert(-2, "\\")}"
           when "<"
             "#{start_of_line}%"
           else
@@ -54,7 +57,7 @@ module HtmlToHaml::Html
           indentation_tracker.close_html_tag
         when /#{self_closing_tag_regex}/
           indentation_tracker.start_self_closing_tag
-        when ">"
+        when ">", /#{HAML_SYMBOL_REGEX}/
           indentation_tracker.start_html_tag
       end
     end

@@ -28,6 +28,8 @@ Plainy plain text
     end
 
     context 'the html string has haml converted erb in it' do
+      subject { described_class.new(@html, remove_whitespace: false).convert }
+
       it 'does not change haml strings' do
         @html = '- "Haml string here"'
         expect(subject).to eq(@html)
@@ -43,6 +45,22 @@ Plainy plain text
         expected_haml = <<-HAML
 %html-stuff
   - "Some haml code"
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
+
+    context 'unescaped haml syntax' do
+      it 'escapes haml syntax leftover from html code' do
+        @html = <<-HTML
+<html-stuff>- "Some html using haml syntax"
+</html-stuff>
+        HTML
+
+        expected_haml = <<-HAML
+%html-stuff
+  \\- "Some html using haml syntax"
         HAML
 
         expect(subject).to eq(expected_haml)
