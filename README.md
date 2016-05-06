@@ -1,5 +1,8 @@
 # HTML-to-HAML ![Travis CI](https://travis-ci.org/NatashaHull/html-to-haml.svg?branch=master)
-Conversion tool for turning html and html.erb files into haml
+Conversion tool for turning html and html.erb files into haml.
+
+This code is currently being used as part of a web html-to-haml conversion tool [here](http://html-to-haml.cfapps.io/).
+Its main purpose is to provide the backend code for that tool, so that the UI and Business logic are completely separate.
 
 ##Usage
 Add the following line to your gemfile.
