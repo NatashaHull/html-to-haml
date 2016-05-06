@@ -1,4 +1,5 @@
 require 'singleton'
+require 'forwardable'
 require_relative '../../html_to_haml'
 require_relative '../../tools/erb/indentation_tracker'
 require_relative '../../tools/erb/control_flow_matcher'
@@ -6,7 +7,7 @@ require_relative '../../tools/erb/control_flow_matcher'
 module HtmlToHaml::Erb
   class IndentationConversionUseCase
     include Singleton
-    extend Forwardable
+    extend ::Forwardable
 
     SNARKY_COMMENT_FOR_HAVING_NESTED_CASE_STATEMENTS = <<-HAML
 / It looks like this is the start of a nested case statement
