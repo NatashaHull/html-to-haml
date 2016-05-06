@@ -87,6 +87,21 @@ Plainy plain text
 
         expect(subject).to eq(expected_haml)
       end
+
+      it 'puts the tag on its own line if it is preceeded by plain text' do
+        @html = (<<-HTML).strip
+Text before html tag
+<html>Html content</html>
+        HTML
+
+        expected_haml = <<-HAML
+Text before html tag
+%html
+  Html content
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
     end
 
     context 'self-closing html tags' do

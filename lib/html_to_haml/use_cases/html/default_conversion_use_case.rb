@@ -67,7 +67,7 @@ module HtmlToHaml::Html
     end
 
     def remove_haml_whitespace(haml:)
-      haml.sub("\n", "").gsub(/(\n\s*)\n\s*%/, '\1%').gsub(/\n\s*\n/, "\n")
+      haml.lstrip.gsub(/(\n\s*)\n\s*%/, '\1%').gsub(/\n\s*\n/, "\n")
     end
   end
 end
