@@ -22,5 +22,5 @@ https://travis-ci.org/NatashaHull/html-to-haml
 
 ###License
 --------------------------
-This repository uses the Unlicense.
-For more information, please refer to <http://unlicense.org>
+This repository uses the MIT Licencse.
+Copyright (c) [2016] [Natasha Hull-Richter]

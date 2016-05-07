@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'html-to-haml'
-  s.version     = '0.0.4'
+  s.version     = '0.0.5'
   s.date        = '2016-05-06'
   s.summary     = 'A program that turns html.erb code into haml code.'
   s.description = 'This app takes in html and erb code and turns it into haml. It supports script and style tags
@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob('lib/html_to_haml/**/**')
   s.homepage    =
       'https://github.com/NatashaHull/html-to-haml.git'
-  s.license     = 'Unlicense'
+  s.license     = 'MIT'
   s.autorequire = 'html_to_haml/converter.rb'
 end
