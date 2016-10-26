@@ -27,6 +27,29 @@ Plainy plain text
       end
     end
 
+    context 'DOCTYPE' do
+      it 'does not the doctype tag' do
+        @html = 'Plain text html with rand\nom ne\nwlines'
+        expect(subject).to eq(@html)
+      end
+
+      it 'corrects the indentation of plain text nested under html' do
+        @html = <<-HTML
+<!DOCTYPE x>
+Plainy plain text
+<html-stuff/>
+        HTML
+
+        expected_haml = <<-HAML
+<!DOCTYPE x>
+Plainy plain text
+%html-stuff
+        HAML
+
+        expect(subject).to eq(expected_haml)
+      end
+    end
+
     context 'the html string has haml converted erb in it' do
       subject { described_class.new(@html, remove_whitespace: false).convert }
 

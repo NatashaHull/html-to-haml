@@ -9,6 +9,7 @@ module HtmlToHaml::Html
     HAML_SYMBOL_REGEX = ">\s*(\/|-|=)"
     ERB_LINE_REGEX = "\n\s*(-|=).*$"
     CLOSING_HTML_REGEX = "<\/.*?>"
+    DOCTYPE_REGEX = "<!DOCTYPE.*?>"
     # For self-closing html tags that aren't self-closing by default
     SELF_CLOSING_HTML_REGEX = "\/>"
     SELF_CLOSING_TAGS = %w(area base br col command embed hr img input keygen link meta param source track wbr)
@@ -26,10 +27,12 @@ module HtmlToHaml::Html
 
     def convert
       indentation_tracker = IndentationTracker.new(indentation_amount: HtmlToHaml::INDENTATION_AMOUNT)
-      haml = @html.gsub(/#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|#{SELF_CLOSING_HTML_REGEX}|#{self_closing_tag_regex}|#{HAML_SYMBOL_REGEX}|<|>|\n/) do |matched_elem|
+      haml = @html.gsub(/#{DOCTYPE_REGEX}|#{ERB_LINE_REGEX}|#{CLOSING_HTML_REGEX}|#{SELF_CLOSING_HTML_REGEX}|#{self_closing_tag_regex}|#{HAML_SYMBOL_REGEX}|<|>|\n/) do |matched_elem|
         adjust_indentation_level(html: matched_elem, indentation_tracker: indentation_tracker)
         start_of_line = "\n#{indentation_tracker.indentation}"
         case matched_elem
+          when /#{DOCTYPE_REGEX}/
+            "#{matched_elem}\n"
           when /#{ERB_LINE_REGEX}/
             "#{start_of_line}#{matched_elem[1..-1]}"
           when /#{self_closing_tag_regex}/
